@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}Files{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto">
+    <div class="mb-8 flex items-center justify-between">
+        <div>
+            <h1 class="text-4xl font-light mb-2">Files</h1>
+            <p class="text-gray-400">Browse and manage your files</p>
+        </div>
+        <a 
+            href="{{ url_for('upload_file') }}"
+            class="bg-white text-black font-medium px-6 py-3 hover:bg-gray-200 transition-colors"
+        >
+            + Upload
+        </a>
+    </div>
+
+    <!-- Username Filter -->
+    <div class="glass border border-gray-800 p-6 mb-6">
+        <form method="GET" action="{{ url_for('list_files') }}" class="flex gap-4">
+            <div class="flex-1">
+                <label for="username" class="block text-sm font-medium mb-2 text-gray-400">
+                    Username
+                </label>
+                <input 
+                    type="text" 
+                    id="username" 
+                    name="username" 
+                    value="{{ username }}"
+                    class="w-full bg-black/40 border border-gray-800 text-white px-4 py-3 focus:outline-none focus:border-gray-700 transition-colors"
+                    placeholder="Enter username"
+                >
+            </div>
+            <div class="flex items-end">
+                <button 
+                    type="submit"
+                    class="bg-white text-black font-medium px-6 py-3 hover:bg-gray-200 transition-colors"
+                >
+                    Load Files
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Files List -->
+    {% if files %}
+    <div class="glass border border-gray-800 p-8">
+        <h2 class="text-2xl font-light mb-6 text-gray-300">Files for {{ username }}</h2>
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead>
+                    <tr class="border-b border-gray-800">
+                        <th class="text-left py-4 px-4 text-gray-400 font-medium text-sm">Filename</th>
+                        <th class="text-center py-4 px-4 text-gray-400 font-medium text-sm">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for file in files %}
+                    <tr class="border-b border-gray-800 hover:bg-black/20 transition-colors">
+                        <td class="py-4 px-4 text-gray-300">{{ file }}</td>
+                        <td class="py-4 px-4">
+                            <div class="flex gap-2 justify-center">
+                                <a 
+                                    href="{{ url_for('download_file', username=username, filename=file) }}"
+                                    class="bg-black/40 border border-gray-800 text-white px-4 py-1.5 text-sm hover:border-gray-700 transition-colors"
+                                >
+                                    Download
+                                </a>
+                                <form method="POST" action="{{ url_for('delete_file') }}" class="inline">
+                                    <input type="hidden" name="username" value="{{ username }}">
+                                    <input type="hidden" name="filename" value="{{ file }}">
+                                    <button 
+                                        type="submit"
+                                        class="bg-red-900/20 border border-red-900/50 text-red-400 px-4 py-1.5 text-sm hover:border-red-800 transition-colors"
+                                        onclick="return confirm('Delete {{ file }}?')"
+                                    >
+                                        Delete
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% else %}
+    <div class="glass border border-gray-800 p-12 text-center">
+        <div class="text-6xl mb-4 opacity-20">📁</div>
+        <p class="text-gray-400 mb-6">No files found for "{{ username }}"</p>
+        <a 
+            href="{{ url_for('upload_file') }}"
+            class="inline-block bg-white text-black font-medium px-6 py-3 hover:bg-gray-200 transition-colors"
+        >
+            Upload Your First File
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

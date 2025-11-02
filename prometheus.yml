@@ -1,0 +1,64 @@
+# Prometheus Configuration for Distributed File Storage System
+# Author: Sarvagya Dwivedi
+
+global:
+  scrape_interval: 5s  # More frequent scraping for stress tests
+  evaluation_interval: 5s
+  external_labels:
+    cluster: 'distributed-file-storage'
+    environment: 'stress-test'
+
+rule_files:
+  # - "rules/*.yml"
+
+scrape_configs:
+  # Web Interface Metrics - HTTP request metrics
+  - job_name: 'web-interface'
+    metrics_path: '/metrics'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['host.docker.internal:8080']
+        labels:
+          service: 'web-interface'
+          instance: 'web-1'
+    # For local testing without Docker, use:
+    # - targets: ['localhost:8080']
+
+  # Backend Node 1 Metrics (port 3100 -> metrics port 13100)
+  - job_name: 'cluster-node-1'
+    metrics_path: '/metrics'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['host.docker.internal:13100']
+        labels:
+          service: 'cluster-node'
+          instance: 'node-1'
+          node_port: '3100'
+
+  # Backend Node 2 Metrics (port 4000 -> metrics port 14000)
+  - job_name: 'cluster-node-2'
+    metrics_path: '/metrics'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['host.docker.internal:14000']
+        labels:
+          service: 'cluster-node'
+          instance: 'node-2'
+          node_port: '4000'
+
+  # Backend Node 3 Metrics (port 5100 -> metrics port 15100)
+  - job_name: 'cluster-node-3'
+    metrics_path: '/metrics'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['host.docker.internal:15100']
+        labels:
+          service: 'cluster-node'
+          instance: 'node-3'
+          node_port: '5100'
+
+  # Prometheus itself
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+

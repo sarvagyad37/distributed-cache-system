@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}Search Files{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <div class="mb-8 text-center">
+        <h1 class="text-4xl font-light mb-2">Search</h1>
+        <p class="text-gray-400">Find files across the cluster</p>
+    </div>
+
+    <div class="glass border border-gray-800 p-8">
+        <form method="POST" action="{{ url_for('search_file') }}" class="space-y-6">
+            <div>
+                <label for="username" class="block text-sm font-medium mb-2 text-gray-400">
+                    Username
+                </label>
+                <input 
+                    type="text" 
+                    id="username" 
+                    name="username" 
+                    value="default_user"
+                    class="w-full bg-black/40 border border-gray-800 text-white px-4 py-3 focus:outline-none focus:border-gray-700 transition-colors"
+                    required
+                >
+            </div>
+            
+            <div>
+                <label for="filename" class="block text-sm font-medium mb-2 text-gray-400">
+                    Filename
+                </label>
+                <input 
+                    type="text" 
+                    id="filename" 
+                    name="filename" 
+                    class="w-full bg-black/40 border border-gray-800 text-white px-4 py-3 focus:outline-none focus:border-gray-700 transition-colors"
+                    placeholder="Enter filename to search"
+                    required
+                >
+            </div>
+            
+            <div class="flex gap-4 pt-4">
+                <button 
+                    type="submit"
+                    class="flex-1 bg-white text-black font-medium px-6 py-3 hover:bg-gray-200 transition-colors"
+                >
+                    Search
+                </button>
+                <a 
+                    href="/dashboard"
+                    class="flex-1 bg-black/40 border border-gray-800 text-white font-medium px-6 py-3 hover:border-gray-700 transition-colors text-center flex items-center justify-center"
+                >
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <div class="mt-8 glass border border-gray-800 p-8">
+        <h2 class="text-xl font-light mb-4">Search Features</h2>
+        <div class="space-y-3 text-gray-400 text-sm">
+            <div class="flex gap-3">
+                <span class="text-gray-600">•</span>
+                <span>Fast metadata lookup across all nodes</span>
+            </div>
+            <div class="flex gap-3">
+                <span class="text-gray-600">•</span>
+                <span>Search by exact filename</span>
+            </div>
+            <div class="flex gap-3">
+                <span class="text-gray-600">•</span>
+                <span>Distributed cluster search</span>
+            </div>
+            <div class="flex gap-3">
+                <span class="text-gray-600">•</span>
+                <span>Checks primary and replica locations</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

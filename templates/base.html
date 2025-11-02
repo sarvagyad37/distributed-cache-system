@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Distributed File Storage{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #000000 !important;
+        }
+        .glass {
+            background: rgba(20, 20, 20, 0.6);
+            backdrop-filter: blur(10px);
+        }
+    </style>
+</head>
+<body class="bg-black text-white min-h-screen">
+    <!-- Header -->
+    <header class="border-b border-gray-800 glass sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <a href="/" class="text-white hover:text-gray-300 transition-colors">
+                        <h1 class="text-2xl font-light tracking-wide">Distributed File Storage</h1>
+                    </a>
+                    <p class="text-xs text-gray-500 mt-0.5">Decentralized Storage System</p>
+                </div>
+                <nav class="flex items-center gap-1">
+                    <a href="/" class="text-gray-300 hover:text-white px-4 py-2 text-sm transition-colors border-b-2 border-transparent hover:border-white">
+                        Home
+                    </a>
+                    <a href="{{ url_for('upload_file') }}" class="text-gray-300 hover:text-white px-4 py-2 text-sm transition-colors border-b-2 border-transparent hover:border-white">
+                        Upload
+                    </a>
+                    <a href="{{ url_for('list_files') }}" class="text-gray-300 hover:text-white px-4 py-2 text-sm transition-colors border-b-2 border-transparent hover:border-white">
+                        Files
+                    </a>
+                    <a href="{{ url_for('search_file') }}" class="text-gray-300 hover:text-white px-4 py-2 text-sm transition-colors border-b-2 border-transparent hover:border-white">
+                        Search
+                    </a>
+                    <a href="/dashboard" class="text-gray-300 hover:text-white px-4 py-2 text-sm transition-colors border-b-2 border-transparent hover:border-white">
+                        Dashboard
+                    </a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="container mx-auto px-6 pt-6">
+                {% for category, message in messages %}
+                    <div class="bg-{% if category == 'error' %}red{% else %}green{% endif %}-900/20 border border-{% if category == 'error' %}red{% else %}green{% endif %}-700/30 text-white px-4 py-3 mb-4">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 py-12">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-gray-900 mt-auto py-8">
+        <div class="container mx-auto px-6 text-center text-gray-600 text-sm">
+            <p>Distributed File Storage System by Sarvagya Dwivedi</p>
+        </div>
+    </footer>
+</body>
+</html>

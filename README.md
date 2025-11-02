@@ -1,120 +1,218 @@
-# Distributed Cache System
+# Distributed File Storage System
 
-This is a distributed cache system built in Python. The system consists of multiple cache nodes and a client that communicates with the nodes to get, set, and delete key-value pairs.
+Author: Sarvagya Dwivedi  
+License: MIT
 
-A low-latency distributed cache system provides a fast, scalable, and fault-tolerant storage solution for temporarily storing and retrieving data. It can be used to speed up applications by caching frequently accessed data, reducing database load and latency. 
+---
 
-Here's an overview of how a distributed cache system works and how it can be used:
+## Overview
 
-1.  **Cache nodes:** The cache system consists of multiple cache nodes, which are responsible for storing and managing data. Each node stores a subset of the data in memory, and the data is distributed across nodes using a partitioning strategy.
-    
-2.  **Data partitioning:** To distribute data evenly across cache nodes, a partitioning strategy like consistent hashing is used. Consistent hashing assigns each key to a cache node based on a hash function. This approach minimizes data movement when adding or removing nodes and ensures an even distribution of data.
-    
-3.  **Data replication:** To provide fault tolerance and ensure data consistency, the cache system implements data replication. When a write operation occurs, the data is replicated to multiple nodes. In case of node failures, the system can still serve requests using the replicated data. Replication strategies include primary-replica, quorum, or chain replication.
-    
-4.  **Cache eviction policies:** Since cache nodes have limited memory, an eviction policy is employed to decide which data to remove when the cache is full. Common eviction policies include Least Recently Used (LRU) and Least Frequently Used (LFU).
-    
-5.  **Client library:** The distributed cache system provides a client library that applications use to interact with the cache. The library handles communication with cache nodes, data partitioning, and locating the appropriate node for read and write operations.
-    
-6.  **Usage scenarios:** The distributed cache system can be used in various scenarios, such as:
-    
-    -   Caching results of database queries or API calls to reduce load on backend systems.
-    -   Storing session data in web applications for faster access and load balancing.
-    -   Implementing a rate limiter by storing request counts in the cache system.
-    -   Using the cache as a temporary storage for data processing pipelines.
+A distributed file storage system built with gRPC, implementing RAFT consensus, automatic replication, and hybrid LRU+LFU caching. Handles 1M+ requests with 85-95% cache hit rate.
 
-## Directory Structure
-
-The project has the following directory structure:
-
+**Architecture:**
 ```
-distributed_cache/
-├── cache_node/
-│   ├── __init__.py
-│   ├── cache.py
-│   ├── eviction_policy.py
-│   ├── replication.py
-│   └── storage.py
-├── client/
-│   ├── __init__.py
-│   ├── client.py
-│   ├── connection.py
-│   └── partitioning.py
-├── common/
-│   ├── __init__.py
-│   ├── constants.py
-│   ├── hashing.py
-│   └── serialization.py
-├── config/
-│   └── config.py
-├── monitoring/
-│   ├── __init__.py
-│   ├── logging.py
-│   └── metrics.py
-├── tests/
-│   ├── __init__.py
-│   ├── cache_node_tests.py
-│   ├── client_tests.py
-│   └── test_utils.py
-├── __init__.py
-├── cache_node_server.py
-└── test_client.py
+Web Interface (Flask)
+    ↓
+SuperNode (coordinator)
+    ↓
+Cluster Nodes (RAFT consensus)
 ```
 
-## Components
+**Features:**
+- File upload/download with automatic sharding (50MB chunks)
+- Distributed storage across least-loaded nodes
+- RAFT consensus for leader election
+- Automatic replication and failover
+- Hybrid LRU+LFU cache (85-95% hit rate)
+- Real-time monitoring (Prometheus, Grafana)
 
-### Cache Node
+---
 
-The `cache_node` directory contains the following components:
+## Quick Start
 
--   `cache.py`: Cache management class
--   `eviction_policy.py`: Eviction policy classes (currently only LRU) 
--   `replication.py`: Replication management class
--   `storage.py`: In-memory storage class
+**Requirements:**
+- Python 3.8+
+- Redis (localhost:6379)
+- 8GB+ RAM recommended
 
-### Client
+**Installation:**
+```bash
+git clone <repository-url>
+cd Distributed-File-Storage-System-master
 
-The `client` directory contains the following components:
+python3 -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
+pip install -r requirements.txt
 
--   `client.py`: Cache client class
--   `connection.py`: Connection management class
--   `partitioning.py`: Data partitioning class (consistent hashing, etc.)
+# Start Redis
+redis-server --daemonize yes --port 6379
+```
 
-### Common
+**Configuration:**
 
-The `common` directory contains the following components:
+Edit `config.yaml` to configure cluster nodes.
 
--   `constants.py`: Constants used across the project
--   `hashing.py`: Hashing functions
--   `serialization.py`: Serialization and deserialization functions
+**Run:**
 
-### Config
+```bash
+# Automated startup
+./start_full_system.sh
 
-The `config` directory contains configuration settings and variables.
+# Manual startup
+# Terminal 1: cd SuperNode && python3 superNode.py
+# Terminal 2: python3 server.py one
+# Terminal 3: python3 server.py two
+# Terminal 4: python3 server.py three
+# Terminal 5: python3 web_app.py
+```
 
-### Monitoring
+**Access:**
+- Web Interface: http://localhost:8080
+- Prometheus: http://localhost:9090
+- Grafana: http://localhost:3000
 
-The `monitoring` directory contains functions for logging and metrics collection.
+---
 
-### Tests
+## Features
 
-The `tests` directory contains unit tests for cache_node and client components, as well as utility functions and classes for tests.
+**Operations:**
+1. Upload - 50MB sharding, distributed storage
+2. Download - Parallel retrieval, chunk reassembly
+3. Search - Fast metadata lookup
+4. List - User file listing
+5. Delete - Distributed deletion
+6. Update - Atomic updates
 
-## Usage
+**Cache Algorithm:**
+- Hybrid LRU+LFU with score-based eviction
+- Logarithmic frequency normalization
+- Multi-timeframe exponential recency decay
+- Async cache writes
+- O(log n) heap-based eviction
+- Capacity: 10,000 files
 
-To start a single cache node, run this with the desired port number as an argument:
+**RAFT Consensus:**
+- Leader election
+- Metadata consistency
+- Automatic failover
 
-`python -m distributed_cache.cache_node_server 5000` 
+---
 
-To start multiple cache nodes run this:
+## Performance
 
-`python -m distributed_cache.launch_cache_nodes`
+| Metric | Value |
+|--------|-------|
+| Cache Hit Rate | 85-95% |
+| Capacity | 10K files |
+| Latency | 60-120ms |
+| Throughput | +30% vs baseline |
+| Stress Test | 1M+ requests |
 
-This will start server on ports 5000, 5001 and 5002.
+---
 
-## Testing
+## Load Testing
 
-We can run tests using the following commands:
+```bash
+# Quick test (5 minutes)
+locust -f stress_test.py --host=http://localhost:8080 \
+  --users 50 --spawn-rate 5 --run-time 5m
 
-`python -m unittest tests.cache_node_tests` and `python -m unittest tests.client_tests`
+# Full test (1M requests, 30 minutes)
+locust -f stress_test.py --host=http://localhost:8080 \
+  --users 200 --spawn-rate 10 --run-time 30m --headless
 
+# Interactive UI
+locust -f stress_test.py --host=http://localhost:8080
+# http://localhost:8089
+```
+
+---
+
+## Troubleshooting
+
+**System startup issues:**
+```bash
+pkill -f "python.*server.py|python.*superNode.py|python.*web_app.py"
+lsof -i :9000  # SuperNode
+lsof -i :3100  # Node 1
+./start_full_system.sh
+```
+
+**Redis connection:**
+```bash
+pgrep redis-server
+redis-cli ping  # Should return PONG
+```
+
+**Cache performance:**
+- Verify cache capacity matches working set
+- Use 80/20 access pattern in tests
+- Monitor eviction rates
+
+**Latency:**
+- Check network between nodes
+- Monitor disk I/O
+- Review memory pressure
+
+---
+
+## Technology Stack
+
+- Python 3.8+
+- gRPC + Protocol Buffers
+- Flask
+- Redis
+- Prometheus + Grafana
+- Locust
+- pysyncobj (RAFT)
+- ThreadPoolExecutor
+
+---
+
+## Project Structure
+
+```
+server.py              # Cluster node server
+web_app.py             # Flask web interface
+client.py              # CLI client
+config.yaml            # Configuration
+stress_test.py         # Locust stress tests
+
+proto/                 # gRPC definitions
+generated/             # Generated code
+
+service/
+  ├── FileServer.py    # File operations
+  ├── HeartbeatService.py
+  └── HybridLRUCache.py
+
+utils/
+  ├── ActiveNodesChecker.py
+  ├── ShardingHandler.py
+  ├── Raft.py
+  └── system_metrics.py
+
+SuperNode/             # Coordinator
+templates/             # Web UI templates
+```
+
+---
+
+## Documentation
+
+- [HOW_TO_RUN.md](HOW_TO_RUN.md) - Detailed setup instructions
+- [PROJECT_UPDATES.md](PROJECT_UPDATES.md) - Development notes and learnings
+- [WEB_INTERFACE_README.md](WEB_INTERFACE_README.md) - Web interface documentation
+- [STRESS_TESTING_GUIDE.md](STRESS_TESTING_GUIDE.md) - Load testing guide
+
+---
+
+## Key Learnings
+
+- Observability: Metrics > logs for production systems
+- Testing: Use realistic access patterns (80/20 rule)
+- Concurrency: Thread pool sizing critical at scale
+- Caching: Smooth functions outperform hard cutoffs
+- Resilience: Plan for failure at every layer
+
+See [PROJECT_UPDATES.md](PROJECT_UPDATES.md) for detailed analysis.

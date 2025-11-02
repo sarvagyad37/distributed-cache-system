@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}Upload File{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <div class="mb-8 text-center">
+        <h1 class="text-4xl font-light mb-2">Upload File</h1>
+        <p class="text-gray-400">Distribute your files across the cluster</p>
+    </div>
+
+    <div class="glass border border-gray-800 p-8">
+        <form method="POST" action="{{ url_for('upload_file') }}" enctype="multipart/form-data" class="space-y-6">
+            <div>
+                <label for="username" class="block text-sm font-medium mb-2 text-gray-400">
+                    Username
+                </label>
+                <input 
+                    type="text" 
+                    id="username" 
+                    name="username" 
+                    value="default_user"
+                    class="w-full bg-black/40 border border-gray-800 text-white px-4 py-3 focus:outline-none focus:border-gray-700 transition-colors"
+                    required
+                >
+            </div>
+            
+            <div>
+                <label for="file" class="block text-sm font-medium mb-2 text-gray-400">
+                    Select File
+                </label>
+                <input 
+                    type="file" 
+                    id="file" 
+                    name="file" 
+                    class="w-full bg-black/40 border border-gray-800 text-white px-4 py-3 focus:outline-none focus:border-gray-700 transition-colors cursor-pointer"
+                    required
+                >
+                <p class="text-xs text-gray-600 mt-2">Any file type supported</p>
+            </div>
+            
+            <div class="flex gap-4 pt-4">
+                <button 
+                    type="submit"
+                    class="flex-1 bg-white text-black font-medium px-6 py-3 hover:bg-gray-200 transition-colors"
+                >
+                    Upload
+                </button>
+                <a 
+                    href="/dashboard"
+                    class="flex-1 bg-black/40 border border-gray-800 text-white font-medium px-6 py-3 hover:border-gray-700 transition-colors text-center flex items-center justify-center"
+                >
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <div class="mt-8 glass border border-gray-800 p-8">
+        <h2 class="text-xl font-light mb-4">How It Works</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="flex gap-3">
+                <div class="text-gray-600 text-xl">1.</div>
+                <div class="text-gray-400 text-sm">File is chunked into 50MB shards</div>
+            </div>
+            <div class="flex gap-3">
+                <div class="text-gray-600 text-xl">2.</div>
+                <div class="text-gray-400 text-sm">Distributed across least-loaded nodes</div>
+            </div>
+            <div class="flex gap-3">
+                <div class="text-gray-600 text-xl">3.</div>
+                <div class="text-gray-400 text-sm">Each shard replicated for safety</div>
+            </div>
+            <div class="flex gap-3">
+                <div class="text-gray-600 text-xl">4.</div>
+                <div class="text-gray-400 text-sm">Metadata stored with RAFT</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

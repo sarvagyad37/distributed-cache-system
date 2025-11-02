@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Distributed File Storage</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #000000 !important;
+        }
+        .glass {
+            background: rgba(20, 20, 20, 0.6);
+            backdrop-filter: blur(10px);
+        }
+    </style>
+</head>
+<body class="bg-black text-white min-h-screen">
+    <!-- Header -->
+    <header class="border-b border-gray-800 glass sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <a href="/" class="text-white hover:text-gray-300 transition-colors">
+                        <h1 class="text-2xl font-light tracking-wide">Distributed File Storage</h1>
+                    </a>
+                    <p class="text-xs text-gray-500 mt-0.5">Decentralized Storage System</p>
+                </div>
+                <nav class="flex items-center gap-1">
+                    <a href="/" class="text-gray-300 hover:text-white px-4 py-2 text-sm transition-colors border-b-2 border-transparent hover:border-white">
+                        Home
+                    </a>
+                    <a href="/upload" class="text-gray-300 hover:text-white px-4 py-2 text-sm transition-colors border-b-2 border-transparent hover:border-white">
+                        Upload
+                    </a>
+                    <a href="/files" class="text-gray-300 hover:text-white px-4 py-2 text-sm transition-colors border-b-2 border-transparent hover:border-white">
+                        Files
+                    </a>
+                    <a href="/search" class="text-gray-300 hover:text-white px-4 py-2 text-sm transition-colors border-b-2 border-transparent hover:border-white">
+                        Search
+                    </a>
+                    <a href="/dashboard" class="text-white px-4 py-2 text-sm border-b-2 border-white">
+                        Dashboard
+                    </a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-12">
+        <div class="max-w-7xl mx-auto">
+            <!-- Hero -->
+            <div class="mb-12 text-center">
+                <h1 class="text-5xl font-light tracking-tight mb-3">System Dashboard</h1>
+                <p class="text-gray-400 text-lg">Real-time metrics and monitoring</p>
+            </div>
+
+            <!-- Key Metrics -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-12">
+                <div class="glass border border-gray-800 p-6">
+                    <p class="text-xs text-gray-500 mb-2">Cache Hit Rate</p>
+                    <p id="cache-hit-rate" class="text-4xl font-light mb-1">0%</p>
+                    <p class="text-xs text-gray-600">Target: 85-95%</p>
+                </div>
+                <div class="glass border border-gray-800 p-6">
+                    <p class="text-xs text-gray-500 mb-2">Total Requests</p>
+                    <p id="total-requests" class="text-4xl font-light mb-1">0</p>
+                    <p class="text-xs text-gray-600">All operations</p>
+                </div>
+                <div class="glass border border-gray-800 p-6">
+                    <p class="text-xs text-gray-500 mb-2">Success Rate</p>
+                    <p id="success-rate" class="text-4xl font-light mb-1">0%</p>
+                    <p class="text-xs text-gray-600">System health</p>
+                </div>
+                <div class="glass border border-gray-800 p-6">
+                    <p class="text-xs text-gray-500 mb-2">Active Connections</p>
+                    <p id="active-connections" class="text-4xl font-light mb-1">0</p>
+                    <p class="text-xs text-gray-600">gRPC channels</p>
+                </div>
+            </div>
+
+            <!-- File Operations -->
+            <div class="mb-12">
+                <h2 class="text-2xl font-light mb-6">File Operations</h2>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="glass border border-gray-800 p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-3xl">📤</span>
+                            <span class="text-xs text-gray-500">Uploads</span>
+                        </div>
+                        <p id="total-uploads" class="text-3xl font-light mb-1">0</p>
+                        <p id="uploads-success" class="text-xs text-gray-600">100% success</p>
+                    </div>
+                    <div class="glass border border-gray-800 p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-3xl">📥</span>
+                            <span class="text-xs text-gray-500">Downloads</span>
+                        </div>
+                        <p id="total-downloads" class="text-3xl font-light mb-1">0</p>
+                        <p id="downloads-success" class="text-xs text-gray-600">100% success</p>
+                    </div>
+                    <div class="glass border border-gray-800 p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-3xl">🔍</span>
+                            <span class="text-xs text-gray-500">Searches</span>
+                        </div>
+                        <p id="total-searches" class="text-3xl font-light mb-1">0</p>
+                        <p id="searches-success" class="text-xs text-gray-600">100% success</p>
+                    </div>
+                    <div class="glass border border-gray-800 p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-3xl">🗑️</span>
+                            <span class="text-xs text-gray-500">Deletes</span>
+                        </div>
+                        <p id="total-deletes" class="text-3xl font-light mb-1">0</p>
+                        <p id="deletes-success" class="text-xs text-gray-600">100% success</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cache & Performance -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+                <div class="glass border border-gray-800 p-8">
+                    <h3 class="text-xl font-light mb-6">Cache Performance</h3>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-400 text-sm">Cache Hits</span>
+                            <span id="cache-hits" class="text-2xl font-light">0</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-400 text-sm">Cache Misses</span>
+                            <span id="cache-misses" class="text-2xl font-light">0</span>
+                        </div>
+                        <div class="flex justify-between items-center border-t border-gray-800 pt-4">
+                            <span class="text-gray-400 text-sm">Cache Size</span>
+                            <span id="cache-size" class="text-2xl font-light">0 / <span id="cache-capacity">0</span></span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-400 text-sm">Utilization</span>
+                            <span id="cache-utilization" class="text-2xl font-light">0%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass border border-gray-800 p-8">
+                    <h3 class="text-xl font-light mb-6">Performance</h3>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-400 text-sm">Avg Response Time</span>
+                            <span id="avg-response-time" class="text-2xl font-light">0ms</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-400 text-sm">P95 Response Time</span>
+                            <span id="p95-response-time" class="text-2xl font-light">0ms</span>
+                        </div>
+                        <div class="flex justify-between items-center border-t border-gray-800 pt-4">
+                            <span class="text-gray-400 text-sm">Requests/sec</span>
+                            <span id="requests-per-sec" class="text-2xl font-light">0</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-400 text-sm">Error Rate</span>
+                            <span id="error-rate" class="text-2xl font-light">0%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- System Stats -->
+            <div class="glass border border-gray-800 p-8">
+                <h3 class="text-xl font-light mb-6">System Statistics</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    <div>
+                        <p class="text-xs text-gray-500 mb-2">Replicated Chunks</p>
+                        <p id="replicated-chunks" class="text-3xl font-light">0</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-500 mb-2">Replicated Files</p>
+                        <p id="replicated-files" class="text-3xl font-light">0</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-500 mb-2">Load Decisions</p>
+                        <p id="load-balance-decisions" class="text-3xl font-light">0</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-500 mb-2">Shards Created</p>
+                        <p id="shards-created" class="text-3xl font-light">0</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function fetchMetrics() {
+            fetch('/api/system-metrics')
+                .then(response => response.json())
+                .then(data => {
+                    // Cache metrics
+                    document.getElementById('cache-hit-rate').textContent = (data.cache_hit_rate || 0).toFixed(1) + '%';
+                    document.getElementById('cache-hits').textContent = data.cache_hits || 0;
+                    document.getElementById('cache-misses').textContent = data.cache_misses || 0;
+                    document.getElementById('cache-size').textContent = data.cache_size || 0;
+                    document.getElementById('cache-capacity').textContent = data.cache_capacity || 0;
+                    document.getElementById('cache-utilization').textContent = (data.cache_utilization || 0).toFixed(1) + '%';
+
+                    // Request metrics
+                    document.getElementById('total-requests').textContent = data.total_requests || 0;
+                    document.getElementById('success-rate').textContent = (data.success_rate || 0).toFixed(1) + '%';
+                    document.getElementById('error-rate').textContent = (data.error_rate || 0).toFixed(1) + '%';
+                    document.getElementById('active-connections').textContent = data.active_connections || 0;
+
+                    // File operations
+                    document.getElementById('total-uploads').textContent = data.total_uploads || 0;
+                    document.getElementById('total-downloads').textContent = data.total_downloads || 0;
+                    document.getElementById('total-searches').textContent = data.total_searches || 0;
+                    document.getElementById('total-deletes').textContent = data.total_deletes || 0;
+
+                    // Performance
+                    document.getElementById('avg-response-time').textContent = (data.avg_response_time || 0).toFixed(0) + 'ms';
+                    document.getElementById('p95-response-time').textContent = (data.p95_response_time || 0).toFixed(0) + 'ms';
+                    document.getElementById('requests-per-sec').textContent = (data.requests_per_sec || 0).toFixed(1);
+
+                    // System stats
+                    document.getElementById('replicated-chunks').textContent = data.replicated_chunks || 0;
+                    document.getElementById('replicated-files').textContent = data.replicated_files || 0;
+                    document.getElementById('load-balance-decisions').textContent = data.load_balance_decisions || 0;
+                    document.getElementById('shards-created').textContent = data.shards_created || 0;
+                })
+                .catch(error => console.error('Error fetching metrics:', error));
+        }
+
+        // Fetch immediately and then every 2 seconds
+        fetchMetrics();
+        setInterval(fetchMetrics, 2000);
+    </script>
+
+    <footer class="border-t border-gray-900 mt-12 py-8">
+        <div class="container mx-auto px-6 text-center text-gray-600 text-sm">
+            <p>Distributed File Storage System by Sarvagya Dwivedi</p>
+        </div>
+    </footer>
+</body>
+</html>
